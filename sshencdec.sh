@@ -45,7 +45,7 @@ trap '{ rm -f "$temp_file"; }' EXIT
 
 if [[ -e "$public_key" ]]; then
     if openssl rsautl -encrypt -pubin -inkey <(ssh-keygen -f "$public_key" -e -m PKCS8) -ssl > "$temp_file"; then
-        echo "-- decrypt with (openssl base64 -d | openssl rsautl -decrypt -inkey ~/.ssh/id_rsa) < the-text-below.txt"
+        echo "-- encrypted with https://git.e.tern.al/s2/sshencdec"
         openssl base64 < "$temp_file"
     fi
 elif [[ -e "$private_key" ]]; then
