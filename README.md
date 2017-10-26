@@ -9,6 +9,12 @@ bash script to encrypt data using a users ssh public key.
 ./sshencdec.sh -s ~/.ssh/id_rsa < file-containing-the-encrypted-text.txt
 ```
 
+## install
+```
+wget https://git.e.tern.al/s2/sshencdec/raw/master/sshencdec.sh
+chmod +x sshencdec.sh
+```
+
 ## examples
 
 ### encrypt a file using your own ssh public key
