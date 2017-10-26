@@ -3,10 +3,10 @@
 bash script to encrypt data using a users ssh public key.
 
 > If you received a message from someone that was encrypted with this script, you can
-> just use openssl to decrypt it, without the need to download this script:
+> decrypt it with your ssh private key using the following command:
 
 ```
-(openssl base64 -d | openssl rsautl -decrypt -inkey ~/.ssh/id_rsa) < file-containing-the-encrypted-text.txt
+./sshencdec.sh -s ~/.ssh/id_rsa < file-containing-the-encrypted-text.txt
 ```
 
 ## examples
