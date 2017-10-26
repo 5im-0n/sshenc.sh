@@ -27,6 +27,7 @@ cleanup() {
     rm -f "$temp_file"
     rm -f "$temp_file_key"
     rm -f "$temp_file_key.enc"
+    rm -f "$temp_file_ppkey"
 }
 
 while getopts "h?p:s:" opt; do
@@ -46,15 +47,17 @@ shift $((OPTIND-1))
 
 [ "$1" = "--" ] && shift
 
-temp_file="$(mktemp "${TMPDIR:-/tmp}/$(basename "$0").XXXXXX.enc")"
-temp_file_key="$(mktemp "${TMPDIR:-/tmp}/$(basename "$0").XXXXXX.key")"
+temp_file="$(mktemp -p . -t "$(basename "$0").XXXXXX.enc")"
+temp_file_key="$(mktemp -p . -t "$(basename "$0").XXXXXX.key")"
+temp_file_ppkey="$(mktemp -p . -t "$(basename "$0").XXXXXX.ppkey")"
 trap cleanup EXIT
 
 #encrypt
 if [[ -e "$public_key" ]]; then
+    ssh-keygen -f "$public_key" -e -m PKCS8 > $temp_file_ppkey
     openssl rand 32 > $temp_file_key
 
-    if openssl rsautl -encrypt -pubin -inkey <(ssh-keygen -f "$public_key" -e -m PKCS8) -in "$temp_file_key" -out "$temp_file_key.enc"; then
+    if openssl rsautl -encrypt -pubin -inkey "$temp_file_ppkey" -in "$temp_file_key" -out "$temp_file_key.enc"; then
         if openssl enc -aes-256-cbc -salt -pass file:"$temp_file_key" > "$temp_file"; then
             echo "-- encrypted with https://git.e.tern.al/s2/sshencdec"
             echo "-- key"
