@@ -99,7 +99,7 @@ elif [[ -e "$private_key" ]]; then
     done
 
     if [ $decrypted = false ]; then
-        >&2 echo "no valid decription key supplied"
+        >&2 echo "no valid decryption key supplied"
         exit 1
     fi
 
