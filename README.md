@@ -22,6 +22,11 @@ chmod +x sshencdec.sh
 ./sshencdec.sh -p ~/.ssh/id_rsa.pub < plain-text-file.txt > encrypted.txt
 ```
 
+### encrypt a file using multiple recipients (broadcast encryption)
+```
+./sshencdec.sh -p ~/.ssh/id_rsa.pub -p id_rsa-alice.pub -p id_rsa-bob.pub < plain-text-file.txt > encrypted.txt
+```
+
 ### encrypt a file using the public key of a github user
 ```
 ./sshencdec.sh -p <(curl -sf "https://github.com/S2-.keys" | head -n1) < plain-text-file.txt
