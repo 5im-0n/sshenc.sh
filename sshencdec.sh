@@ -59,7 +59,7 @@ if [[ "${#public_key[@]}" > 0 ]]; then
             echo "-- key"
             convertedpubkey=$temp_dir/$(basename "$pubkey").pem
             ssh-keygen -f "$pubkey" -e -m PKCS8 > $convertedpubkey
-            #encrypt key with oublic keys
+            #encrypt key with public keys
             openssl rsautl -encrypt -pubin -inkey "$convertedpubkey" -in "$temp_file_key" -out $temp_dir/$(basename "$pubkey").key.enc
             openssl base64 -in $temp_dir/$(basename "$pubkey").key.enc
             echo "-- /key"
