@@ -41,8 +41,8 @@ shift $((OPTIND -1))
 [ "$1" = "--" ] && shift
 
 temp_dir="$(mktemp -d -t "$me.XXXXXX")"
-temp_file_key="$(mktemp -p $temp_dir -t "$(basename "$0").XXXXXX.key")"
-temp_file="$(mktemp -p $temp_dir -t "$(basename "$0").XXXXXX.cypher")"
+temp_file_key="$(mktemp "$temp_dir/$(basename "$0").XXXXXX.key")"
+temp_file="$(mktemp "$temp_dir/$(basename "$0").XXXXXX.cypher")"
 trap cleanup EXIT
 
 #encrypt
