@@ -29,7 +29,7 @@ chmod +x sshencdec.sh
 
 ### encrypt a file using the public key of a github user
 ```
-./sshencdec.sh -p <(curl -sf "https://github.com/S2-.keys" | tail -n1) < plain-text-file.txt
+./sshencdec.sh -p <(curl -sf "https://github.com/S2-.keys" | grep ssh-rsa | tail -n1) < plain-text-file.txt
 ```
 
 this line fetches the first public key for the github user `S2-` and encrypts the file `plain-text-file.txt` using this key.
