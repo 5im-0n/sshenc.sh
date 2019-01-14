@@ -87,18 +87,18 @@
 
 					<h3 id="encrypt-multi">encrypt a file using multiple recipients (broadcast encryption)</h3>
 					<div class="bd-callout bd-callout-info">
-						<code>./sshencdec.sh -p ~/.ssh/id_rsa.pub -p id_rsa-alice.pub -p id_rsa-bob.pub < plain-text-file.txt > encrypted.txt</code>
+						<code>./sshenc.sh -p ~/.ssh/id_rsa.pub -p id_rsa-alice.pub -p id_rsa-bob.pub < plain-text-file.txt > encrypted.txt</code>
 					</div>
 
 					<h3 id="encrypt-gh">encrypt a file using the public key of a github user</h3>
 					<div class="bd-callout bd-callout-info">
-						<code>./sshencdec.sh -p <(curl -sf "https://github.com/S2-.keys" | grep ssh-rsa | tail -n1) < plain-text-file.txt</code>
+						<code>./sshenc.sh -p <(curl -sf "https://github.com/S2-.keys" | grep ssh-rsa | tail -n1) < plain-text-file.txt</code>
 					</div>
 					<p>this line fetches the first public key for the github user S2- and encrypts the file plain-text-file.txt using this key.</p>
 
 					<h3 id="decrypt">dedecrypt a file</h3>
 					<div class="bd-callout bd-callout-info">
-						<code>./sshencdec.sh -s ~/.ssh/id_rsa < encrypted.txt</code>
+						<code>./sshenc.sh -s ~/.ssh/id_rsa < encrypted.txt</code>
 					</div>
 				</div>
 			</div>
