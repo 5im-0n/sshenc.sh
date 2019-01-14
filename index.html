@@ -76,6 +76,7 @@
 						<code>wget https://sshenc.sh/sshenc.sh<br>
 						chmod +x sshenc.sh</code>
 					</div>
+					<!--
 
 					<h3>Run it from remote every time</h3>
 					If you are
@@ -91,7 +92,10 @@
 					To add it to your environment permanently:<br>
 					<code>echo "alias sshenc.sh='bash <(curl -s https://sshenc.sh/sshenc.sh)'" >> ~/.bashrc</code>
 					<br>
+					Be careful: if you do this you trust https://sshenc.sh/ to always return the same script. It's actually a remote code execution if someone hacks https://sshenc.sh/ or the server becomes malicious.
 					<br>
+					<br>
+					-->
 				</div>
 			</div>
 
