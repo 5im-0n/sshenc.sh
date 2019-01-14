@@ -2,7 +2,7 @@
 
 OPTIND=1 # reset in case getopts has been used previously in the shell.
 
-me=`basename "$0"`
+me=sshenc.sh
 
 show_help() {
 cat << EOF
