@@ -15,7 +15,7 @@ examples:
     - decrypt a file
     $me -s ~/.ssh/id_rsa < encrypted.txt
 
-$me home page: https://git.e.tern.al/s2/sshencdec
+$me home page: https://sshenc.sh/
 EOF
 }
 
@@ -51,7 +51,7 @@ if [[ "${#public_key[@]}" > 0 ]]; then
 
     plaintext=`cat`
 
-    echo "-- encrypted with https://git.e.tern.al/s2/sshencdec"
+    echo "-- encrypted with https://sshenc.sh/"
     echo "-- keys"
     for pubkey in "${public_key[@]}"
     do
@@ -108,4 +108,3 @@ else
     show_help
     exit 1
 fi
-
