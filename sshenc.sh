@@ -54,13 +54,14 @@ if [[ "${#public_key[@]}" > 0 ]]; then
     for pubkey in "${public_key[@]}"
     do
         if [[ -e "$pubkey" ]]; then
-            echo "-- key"
             convertedpubkey=$temp_dir/$(basename "$pubkey").pem
             ssh-keygen -f "$pubkey" -e -m PKCS8 > $convertedpubkey
             #encrypt key with public keys
-            openssl rsautl -encrypt -pubin -inkey "$convertedpubkey" -in "$temp_file_key" -out $temp_dir/$(basename "$pubkey").key.enc
-            openssl base64 -in $temp_dir/$(basename "$pubkey").key.enc
-            echo "-- /key"
+            if openssl rsautl -encrypt -pubin -inkey "$convertedpubkey" -in "$temp_file_key" -out $temp_dir/$(basename "$pubkey").key.enc; then
+                echo "-- key"
+                openssl base64 -in $temp_dir/$(basename "$pubkey").key.enc
+                echo "-- /key"
+            fi
         fi
     done
     echo "-- /keys"
@@ -92,8 +93,8 @@ elif [[ -e "$private_key" ]]; then
         if ((echo "$key" | openssl base64 -d | openssl rsautl -decrypt -ssl -inkey "$private_key" > "$temp_file") > /dev/null 2>&1); then
             if echo "$cypher" | openssl base64 -d | openssl aes-256-cbc -d -pass file:"$temp_file"; then
                 decrypted=true
-            fi;
-        fi;
+            fi
+        fi
     done
 
     if [ $decrypted = false ]; then
