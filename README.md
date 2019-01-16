@@ -5,7 +5,7 @@ If you received a message from someone that was encrypted with this script, you 
 ```
 bash <(curl -s https://sshenc.sh/sshenc.sh) -s ~/.ssh/id_rsa < file-containing-the-encrypted-text.txt
 ```
-sshenc.sh uses openssl under the hood, so you need to have that installed in yout path to make it work.
+sshenc.sh uses openssl under the hood, so you need to have that installed in your path to make it work.
 
 ## Install
 ```
