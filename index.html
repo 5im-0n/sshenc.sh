@@ -15,7 +15,6 @@
 
 		<!-- my own stuff -->
 		<link href="main.css" rel="stylesheet">
-
 	</head>
 
 	<body>
@@ -55,93 +54,24 @@
 		<!-- Page Content -->
 		<div class="container">
 			<div class="row">
-				<div class="col-lg-12">
-					<h1 class="mt-5">sshenc.sh</h1>
-					<hr>
-					<p class="lead">bash script to encrypt data using a users ssh public key.</p>
-					<hr>
-					<div class="bd-callout bd-callout-info">
-						If you received a message from someone that was encrypted with this script, you can decrypt it with your ssh private key using the following command without installing anything:<br>
-						<code>bash <(curl -s https://sshenc.sh/sshenc.sh) -s ~/.ssh/id_rsa < file-containing-the-encrypted-text.txt</code>
-					</div>
-					<p>sshenc.sh uses openssl under the hood, so you need to have that installed in yout path to make it work.</p>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-12">
-					<h2>Install</h2>
-					<hr>
-					<h3>Install locally</h3>
-					<div class="bd-callout bd-callout-info">
-						<code>wget https://sshenc.sh/sshenc.sh<br>
-						chmod +x sshenc.sh</code>
-					</div>
-					<!--
-
-					<h3>Run it from remote every time</h3>
-					If you are
-					<ul>
-					<li>really brave, and</li>
-					<li>want to be sure to run the latest version every time, or</li>
-					<li>maybe don't want/can't install files</li>
-					</ul>
-					you can use an alias that downloads and executes the script every time:<br>
-					<code>alias sshenc.sh='bash <(curl -s https://sshenc.sh/sshenc.sh)'</code>
-					<br>
-					<br>
-					To add it to your environment permanently:<br>
-					<code>echo "alias sshenc.sh='bash <(curl -s https://sshenc.sh/sshenc.sh)'" >> ~/.bashrc</code>
-					<br>
-					Be careful: if you do this you trust https://sshenc.sh/ to always return the same script. It's actually a remote code execution if someone hacks https://sshenc.sh/ or the server becomes malicious.
-					<br>
-					<br>
-					-->
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-12">
-					<h2 id="examples">Examples</h2>
-					<hr>
-
-					<h3 id="encrypt-own">encrypt a file using your own ssh public key</h3>
-					<div class="bd-callout bd-callout-info">
-						<code>sshenc.sh -p ~/.ssh/id_rsa.pub < plain-text-file.txt > encrypted.txt</code>
-					</div>
-
-					<h3 id="encrypt-multi">encrypt a file using multiple recipients (broadcast encryption)</h3>
-					<div class="bd-callout bd-callout-info">
-						<code>sshenc.sh -p ~/.ssh/id_rsa.pub -p id_rsa-alice.pub -p id_rsa-bob.pub < plain-text-file.txt > encrypted.txt</code>
-					</div>
-
-					<h3 id="encrypt-gh">encrypt a file using the public key of a github user</h3>
-					<div class="bd-callout bd-callout-info">
-						<code>sshenc.sh -p <(curl -sf "https://github.com/S2-.keys" | grep ssh-rsa | tail -n1) < plain-text-file.txt</code>
-					</div>
-					<p>this line fetches the first public key for the github user S2- and encrypts the file plain-text-file.txt using this key.</p>
-
-					<h3 id="decrypt">dedecrypt a file</h3>
-					<div class="bd-callout bd-callout-info">
-						<code>sshenc.sh -s ~/.ssh/id_rsa < encrypted.txt</code>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-12">
-					<h2>License</h2>
-					<hr>
-					<a href="https://opensource.org/licenses/MIT">MIT</a>
-				</div>
+				<div id="md"></div>
 			</div>
 		</div>
 
-
-
 		<!-- Bootstrap core JavaScript -->
-		<script src="vendor/jquery/jquery.min.js"></script>
 		<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.2/markdown-it.min.js"></script>
+
+		<script>
+			var md = window.markdownit();
+			fetch('README.md')
+			.then((r) => {
+				return r.text();
+			})
+			.then((r) => {
+				document.getElementById('md').innerHTML = md.render(r);
+			});
+		</script>
 
 	</body>
 
