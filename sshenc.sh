@@ -49,8 +49,6 @@ trap cleanup EXIT
 if [[ "${#public_key[@]}" > 0 ]]; then
     openssl rand 32 > $temp_file_key
 
-    plaintext=`cat`
-
     echo "-- encrypted with https://sshenc.sh/"
     echo "-- keys"
     for pubkey in "${public_key[@]}"
@@ -67,7 +65,7 @@ if [[ "${#public_key[@]}" > 0 ]]; then
     done
     echo "-- /keys"
 
-    if echo "$plaintext" | openssl enc -aes-256-cbc -salt -pass file:"$temp_file_key" > "$temp_file"; then
+    if cat | openssl enc -aes-256-cbc -salt -pass file:"$temp_file_key" > "$temp_file"; then
         openssl base64 < "$temp_file"
     fi
 
