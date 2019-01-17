@@ -31,7 +31,7 @@ sshenc.sh -p <(curl -sf "https://github.com/S2-.keys" | grep ssh-rsa | tail -n1)
 ```
 this line fetches the first public key for the github user S2- and encrypts the file plain-text-file.txt using this key.
 
-### dedecrypt a file
+### decrypt a file
 ```
 sshenc.sh -s ~/.ssh/id_rsa < encrypted.txt
 ```
