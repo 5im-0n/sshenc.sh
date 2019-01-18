@@ -9,7 +9,7 @@ sshenc.sh uses openssl under the hood, so you need to have that installed in you
 
 ## Install
 ```
-wget https://sshenc.sh/sshenc.sh
+curl -O https://sshenc.sh/sshenc.sh
 chmod +x sshenc.sh
 ```
 
