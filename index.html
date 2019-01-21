@@ -64,13 +64,16 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.2/markdown-it.min.js"></script>
 		<script>
 			var md = window.markdownit();
-			fetch('README.md')
-			.then((r) => {
-				return r.text();
-			})
-			.then((r) => {
-				document.getElementById('md').innerHTML = md.render(r);
-			});
+
+			var xmlhttp;
+			xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function(){
+				if (xmlhttp.readyState == 4 && xmlhttp.status == 200){
+					document.getElementById('md').innerHTML = md.render(xmlhttp.responseText);
+				}
+			}
+			xmlhttp.open("GET", 'README.md', true);
+			xmlhttp.send();
 		</script>
 
 	</body>
