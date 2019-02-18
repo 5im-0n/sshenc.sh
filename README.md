@@ -1,7 +1,6 @@
-# sshenc.sh
-**bash script to encrypt data using a users ssh public key**
+# ![sshenc.sh](logo.png)
 
-![sshenc.sh](logo.png)
+**bash script to encrypt data using a users ssh public key**
 
 If you received a message from someone that was encrypted with this script, you can decrypt it with your ssh private key using the following command without installing anything:
 ```
