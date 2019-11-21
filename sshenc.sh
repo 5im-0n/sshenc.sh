@@ -67,7 +67,7 @@ if [[ "${#public_key[@]}" > 0 ]]; then
     echo "-- /keys"
 
     if cat | openssl enc -aes-256-cbc -salt -pass file:"$temp_file_key" > "$temp_file"; then
-        openssl base64 < "$temp_file"
+        openssl base64 -A < "$temp_file"
     fi
 
 #decrypt
@@ -90,8 +90,8 @@ elif [[ -e "$private_key" ]]; then
     decrypted=false
     for key in "${keys[@]}"
     do
-        if ((echo "$key" | openssl base64 -d | openssl rsautl -decrypt -ssl -inkey "$private_key" > "$temp_file") > /dev/null 2>&1); then
-            if echo "$cypher" | openssl base64 -d | openssl aes-256-cbc -d -pass file:"$temp_file"; then
+        if ((echo "$key" | openssl base64 -d -A | openssl rsautl -decrypt -ssl -inkey "$private_key" > "$temp_file") > /dev/null 2>&1); then
+            if echo "$cypher" | openssl base64 -d -A | openssl aes-256-cbc -d -pass file:"$temp_file"; then
                 decrypted=true
             fi
         fi
