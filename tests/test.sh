@@ -10,24 +10,15 @@ plaintext=$(cat sometext)
 
 echo -n 'testing multiple pubkeys: '
 ../sshenc.sh -p id_rsa-1.pub -p id_rsa-2.pub -p id_rsa-3.pub < sometext > $tempfile
-cyph=$(../sshenc.sh -s id_rsa-1 < $tempfile)
-if [ "$cyph" == "$plaintext" ]; then
-    echo -n "key1: ✓ "
-else
-    echo -n "key1: ⛝ "
-fi
-cyph=$(../sshenc.sh -s id_rsa-2 < $tempfile)
-if [ "$cyph" == "$plaintext" ]; then
-    echo -n "key2: ✓ "
-else
-    echo -n "key2: ⛝ "
-fi
-cyph=$(../sshenc.sh -s id_rsa-3 < $tempfile)
-if [ "$cyph" == "$plaintext" ]; then
-    echo -n "key3: ✓ "
-else
-    echo -n "key4: ⛝ "
-fi
+
+for i in {1..3}; do
+    cyph=$(../sshenc.sh -s id_rsa-$i < $tempfile)
+    if [ "$cyph" == "$plaintext" ]; then
+        echo -n "key$i: ✓ "
+    else
+        echo -n "key$i: ⛝ "
+    fi
+done
 
 echo
 echo done.
