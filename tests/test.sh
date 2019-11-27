@@ -1,3 +1,7 @@
+sshenc=../sshenc.sh
+#to test the pre OpenSSL 1.1.1 script, uncomment the line below:
+#sshenc=../sshenc-pre1.1.1.sh
+
 cleanup() {
     rm -rf "$temp_dir"
 }
@@ -9,10 +13,10 @@ tempfile="$(mktemp "$temp_dir/sshenc.sh.XXXXXX.cypher")"
 plaintext=$(cat sometext)
 
 echo -n 'testing multiple pubkeys: '
-../sshenc.sh -p id_rsa-1.pub -p id_rsa-2.pub -p id_rsa-3.pub < sometext > $tempfile
+$sshenc -p id_rsa-1.pub -p id_rsa-2.pub -p id_rsa-3.pub < sometext > $tempfile
 
 for i in {1..3}; do
-    cyph=$(../sshenc.sh -s id_rsa-$i < $tempfile)
+    cyph=$($sshenc -s id_rsa-$i < $tempfile)
     if [ "$cyph" == "$plaintext" ]; then
         echo -n "key$i: ✓ "
     else
@@ -22,8 +26,8 @@ done
 echo
 
 echo -n 'testing encryption with a single key: '
-../sshenc.sh -p id_rsa-1.pub < sometext > $tempfile
-cyph=$(../sshenc.sh -s id_rsa-1 < $tempfile)
+$sshenc -p id_rsa-1.pub < sometext > $tempfile
+cyph=$($sshenc -s id_rsa-1 < $tempfile)
 if [ "$cyph" == "$plaintext" ]; then
     echo -n "✓"
 else
@@ -32,8 +36,8 @@ fi
 echo
 
 echo -n 'testing encryption of a binary file: '
-../sshenc.sh -p id_rsa-1.pub < ../logo.png > $tempfile
-../sshenc.sh -s id_rsa-1 < $tempfile > $temp_dir/binary
+$sshenc -p id_rsa-1.pub < ../logo.png > $tempfile
+$sshenc -s id_rsa-1 < $tempfile > $temp_dir/binary
 diff ../logo.png $temp_dir/binary
 retval=$?
 if [ $retval -eq 0 ]; then
