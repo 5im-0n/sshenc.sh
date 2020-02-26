@@ -6,7 +6,7 @@ me=sshenc.sh
 
 show_help() {
 cat << EOF
-usage: $me [-p <public ssh key> | -s <private ssh key>] [-h]
+usage: $me [[-p <public ssh key> | -g <github handle>]| -s <private ssh key>] [-h]
 
 examples:
     - encrypt a file
@@ -14,6 +14,9 @@ examples:
 
     - decrypt a file
     $me -s ~/.ssh/id_rsa < encrypted.txt
+
+    - encrypt a file to a GitHub user (requires curl and bash 4)
+    $me -g foo < plain-text-file.txt > encrypted.txt
 
 $me home page: https://sshenc.sh/
 EOF
@@ -23,7 +26,7 @@ cleanup() {
     rm -rf "$temp_dir"
 }
 
-while getopts "h?p:s:" opt; do
+while getopts "h?p:s:g:" opt; do
     case "$opt" in
     h|\?)
     show_help
@@ -33,6 +36,7 @@ while getopts "h?p:s:" opt; do
     ;;
     s)  private_key=$OPTARG
     ;;
+    g)  github_handle+=("$OPTARG")
     esac
 done
 
@@ -44,6 +48,30 @@ temp_dir="$(mktemp -d -t "$me.XXXXXX")"
 temp_file_key="$(mktemp "$temp_dir/$me.XXXXXX.key")"
 temp_file="$(mktemp "$temp_dir/$me.XXXXXX.cypher")"
 trap cleanup EXIT
+
+# retrieve ssh keys from github
+OLDMASK=$(umask)
+umask 0266
+if [[ "${#github_handle[@]}" -gt 0 ]]; then
+    for handle in "${github_handle[@]}"
+    do
+        curl -s "https://github.com/$handle.keys" | grep ssh-rsa > "$temp_dir/$handle"
+        if [ -s "$temp_dir/$handle" ]; then
+            # dont do this with big files
+            mapfile -t handle_keys < "$temp_dir/$handle"
+            for key in "${!handle_keys[@]}"
+            do
+                echo "${handle_keys[key]}"
+                printf "%s" "${handle_keys[key]}" > "$temp_dir/$handle.$key"
+                echo "$temp_dir/$handle.$key"
+                public_key+=("$temp_dir/$handle.$key")
+            done
+        fi
+    done
+
+fi
+
+umask "$OLDMASK"
 
 #encrypt
 if [[ "${#public_key[@]}" > 0 ]]; then
