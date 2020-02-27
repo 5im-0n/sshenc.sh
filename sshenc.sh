@@ -85,7 +85,7 @@ if [[ "${#public_key[@]}" > 0 ]]; then
             convertedpubkey=$temp_dir/$(basename "$pubkey").pem
             ssh-keygen -f "$pubkey" -e -m PKCS8 > $convertedpubkey
             #encrypt key with public keys
-            if openssl rsautl -encrypt -pubin -inkey "$convertedpubkey" -in "$temp_file_key" -out $temp_dir/$(basename "$pubkey").key.enc; then
+            if openssl rsautl -encrypt -oaep -pubin -inkey "$convertedpubkey" -in "$temp_file_key" -out $temp_dir/$(basename "$pubkey").key.enc; then
                 echo "-- key"
                 openssl base64 -in $temp_dir/$(basename "$pubkey").key.enc
                 echo "-- /key"
@@ -120,7 +120,7 @@ elif [[ -e "$private_key" ]]; then
 
     decrypted=false
     for key in "${keys[@]}"; do
-        if ((echo "$key" | openssl base64 -d -A | openssl rsautl -decrypt -ssl -inkey "$temp_dir/private_key" >"$temp_file") >/dev/null 2>&1); then
+        if ((echo "$key" | openssl base64 -d -A | openssl rsautl -decrypt -oaep -inkey "$temp_dir/private_key" >"$temp_file") >/dev/null 2>&1); then
             if echo "$cypher" | openssl base64 -d -A | openssl aes-256-cbc -pbkdf2 -iter 100000 -d -pass file:"$temp_file"; then
                 decrypted=true
             fi
