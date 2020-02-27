@@ -120,7 +120,7 @@ elif [[ -e "$private_key" ]]; then
 
     decrypted=false
     for key in "${keys[@]}"; do
-        if ((echo "$key" | openssl base64 -d -A | openssl rsautl -decrypt -oaep -inkey "$temp_dir/private_key" >"$temp_file") >/dev/null 2>&1); then
+        if $(echo "$key" | openssl base64 -d -A | openssl rsautl -decrypt -oaep -inkey "$temp_dir/private_key" >"$temp_file" 2>/dev/null); then
             if echo "$cypher" | openssl base64 -d -A | openssl aes-256-cbc -pbkdf2 -iter 100000 -d -pass file:"$temp_file"; then
                 decrypted=true
             fi
