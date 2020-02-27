@@ -103,6 +103,9 @@ elif [[ -e "$private_key" ]]; then
     stdin=`cat`
     keys_enc=$(echo "$stdin" | awk '/-- keys/{f=1;next} /-- \/keys/{f=0} f')
     cypher=$(echo "$stdin" | sed -e '1,/-- \/keys/d')
+    install -m 0600 "$private_key" "$temp_dir/private_key"
+    ssh-keygen -p -m PEM -N '' -f "$temp_dir/private_key"
+
 
     i=0
     while read line ; do \
@@ -116,9 +119,8 @@ elif [[ -e "$private_key" ]]; then
     done <<< "$keys_enc"
 
     decrypted=false
-    for key in "${keys[@]}"
-    do
-        if ((echo "$key" | openssl base64 -d -A | openssl rsautl -decrypt -ssl -inkey "$private_key" > "$temp_file") > /dev/null 2>&1); then
+    for key in "${keys[@]}"; do
+        if ((echo "$key" | openssl base64 -d -A | openssl rsautl -decrypt -ssl -inkey "$temp_dir/private_key" >"$temp_file") >/dev/null 2>&1); then
             if echo "$cypher" | openssl base64 -d -A | openssl aes-256-cbc -pbkdf2 -iter 100000 -d -pass file:"$temp_file"; then
                 decrypted=true
             fi
