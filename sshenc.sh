@@ -104,7 +104,7 @@ elif [[ -e "$private_key" ]]; then
     keys_enc=$(echo "$stdin" | awk '/-- keys/{f=1;next} /-- \/keys/{f=0} f')
     cypher=$(echo "$stdin" | sed -e '1,/-- \/keys/d')
     install -m 0600 "$private_key" "$temp_dir/private_key"
-    ssh-keygen -p -m PEM -N '' -f "$temp_dir/private_key"
+    ssh-keygen -p -m PEM -N '' -f "$temp_dir/private_key" >/dev/null
 
 
     i=0
