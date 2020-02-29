@@ -61,9 +61,7 @@ if [[ "${#github_handle[@]}" -gt 0 ]]; then
             mapfile -t handle_keys < "$temp_dir/$handle"
             for key in "${!handle_keys[@]}"
             do
-                echo "${handle_keys[key]}"
                 printf "%s" "${handle_keys[key]}" > "$temp_dir/$handle.$key"
-                echo "$temp_dir/$handle.$key"
                 public_key+=("$temp_dir/$handle.$key")
             done
         fi
