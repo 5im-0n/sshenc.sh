@@ -49,6 +49,18 @@ temp_file_key="$(mktemp "$temp_dir/$me.XXXXXX.key")"
 temp_file="$(mktemp "$temp_dir/$me.XXXXXX.cypher")"
 trap cleanup EXIT
 
+uname=$(uname -s 2>/dev/null)
+
+case "${uname}x" in
+    Darwinx)
+        openssl_path=$(command -v openssl 2>/dev/null)
+        if [ "${openssl_path}x" = "/usr/bin/opensslx" ]; then
+            echo >&2 "You need openssl 1.1.1 installed and in the \$PATH"
+            exit 1
+        fi
+        ;;
+esac
+
 # retrieve ssh keys from github
 OLDMASK=$(umask)
 umask 0266
