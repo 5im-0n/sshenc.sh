@@ -69,13 +69,12 @@ if [[ "${#github_handle[@]}" -gt 0 ]]; then
     do
         curl -s "https://github.com/$handle.keys" | grep ssh-rsa > "$temp_dir/$handle"
         if [ -s "$temp_dir/$handle" ]; then
-            # dont do this with big files
-            mapfile -t handle_keys < "$temp_dir/$handle"
-            for key in "${!handle_keys[@]}"
-            do
-                printf "%s" "${handle_keys[key]}" > "$temp_dir/$handle.$key"
-                public_key+=("$temp_dir/$handle.$key")
-            done
+            key_index=0
+            while IFS= read -r key; do
+                printf "%s" "${key}" > "$temp_dir/$handle.$key_index"
+                public_key+=("$temp_dir/$handle.$key_index")
+                key_index=$((key_index+1))
+            done < "$temp_dir/$handle"
         fi
     done
 
