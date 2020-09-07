@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-OPTIND=1 # reset in case getopts has been used previously in the shell.
-
+# --- constants
 me=sshenc.sh
 
 show_help() {
@@ -9,23 +8,25 @@ cat << EOF
 usage: $me [[-p <public ssh key> | -g <github handle>]| -s <private ssh key>] [-h]
 
 examples:
-    - encrypt a file
-    $me -p ~/.ssh/id_rsa.pub < plain-text-file.txt > encrypted.txt
 
     - decrypt a file
     $me -s ~/.ssh/id_rsa < encrypted.txt
 
-    - encrypt a file to a GitHub user (requires curl and bash 4)
+    - encrypt a file
+    $me -p ~/.ssh/id_rsa.pub < plain-text-file.txt > encrypted.txt
+
+    - encrypt using a GitHub users public SSH key (requires curl and bash 3.2)
     $me -g foo < plain-text-file.txt > encrypted.txt
+
+    - encrypt using multiple public keys (file can be read by any associated private key)
+    $me -g foo -g bar -p baz -p ~/.ssh/id_rsa.pub < plain-text-file.txt > encrypted.txt
 
 $me home page: https://sshenc.sh/
 EOF
 }
 
-cleanup() {
-    rm -rf "$temp_dir"
-}
-
+# --- process option parameters
+OPTIND=1                           # reset in case getopts has been used previously in the shell
 while getopts "h?p:s:g:" opt; do
     case "$opt" in
     h|\?)
@@ -40,13 +41,19 @@ while getopts "h?p:s:g:" opt; do
     esac
 done
 
-shift $((OPTIND -1))
-
+shift $((OPTIND -1))               # pop the processed options off the stack
 [ "$1" = "--" ] && shift
 
+# --- setup environment
+
+# data cache files
 temp_dir="$(mktemp -d -t "$me.XXXXXX")"
 temp_file_key="$(mktemp "$temp_dir/$me.XXXXXX.key")"
 temp_file="$(mktemp "$temp_dir/$me.XXXXXX.cypher")"
+
+cleanup() {
+    rm -rf "$temp_dir"
+}
 trap cleanup EXIT
 
 # os specific configuration
@@ -68,10 +75,14 @@ case "$(uname -s 2>/dev/null)" in
         openssl_params='-pbkdf2 -iter 100000'
 esac
 
-# retrieve ssh keys from github
-OLDMASK=$(umask)
-umask 0266
+# --- retrieve ssh keys from github
 if [[ "${#github_handle[@]}" -gt 0 ]]; then
+    if ! which curl >/dev/null ; then
+        >&2 echo "curl command not found"
+        exit 1
+    fi
+
+    OLDMASK=$(umask); umask 0266
     for handle in "${github_handle[@]}"
     do
         curl -s "https://github.com/$handle.keys" | grep ssh-rsa > "$temp_dir/$handle"
@@ -84,12 +95,10 @@ if [[ "${#github_handle[@]}" -gt 0 ]]; then
             done < "$temp_dir/$handle"
         fi
     done
-
+    umask "$OLDMASK"
 fi
 
-umask "$OLDMASK"
-
-#encrypt
+# --- encrypt stdin
 if [[ "${#public_key[@]}" > 0 ]]; then
     openssl rand 32 > $temp_file_key
 
@@ -114,14 +123,13 @@ if [[ "${#public_key[@]}" > 0 ]]; then
         openssl base64 -A < "$temp_file"
     fi
 
-#decrypt
+# --- decrypt stdin
 elif [[ -e "$private_key" ]]; then
     stdin=`cat`
     keys_enc=$(echo "$stdin" | awk '/-- keys/{f=1;next} /-- \/keys/{f=0} f')
     cypher=$(echo "$stdin" | sed -e '1,/-- \/keys/d')
     install -m 0600 "$private_key" "$temp_dir/private_key"
     ssh-keygen -p -m PEM -N '' -f "$temp_dir/private_key" >/dev/null
-
 
     i=0
     while read line ; do \
@@ -148,7 +156,7 @@ elif [[ -e "$private_key" ]]; then
         exit 1
     fi
 
-#help
+# --- help
 else
     show_help
     exit 1
