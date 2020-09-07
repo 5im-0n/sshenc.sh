@@ -49,16 +49,23 @@ temp_file_key="$(mktemp "$temp_dir/$me.XXXXXX.key")"
 temp_file="$(mktemp "$temp_dir/$me.XXXXXX.cypher")"
 trap cleanup EXIT
 
-uname=$(uname -s 2>/dev/null)
-
-case "${uname}x" in
-    Darwinx)
-        openssl_path=$(command -v openssl 2>/dev/null)
-        if [ "${openssl_path}x" = "/usr/bin/opensslx" ]; then
-            echo >&2 "You need openssl 1.1.1 installed and in the \$PATH"
+# os specific configuration
+case "$(uname -s 2>/dev/null)" in
+    Darwin)
+        if [[ -n $(openssl version | grep -Eo "LibreSSL [2-9]") ]]; then
+            openssl_params=''
+        else
+            echo >&2 "Install openssl 1.1.1 or higher and add it to your \$PATH"
+            echo ''
+            echo '    brew install openssl'
+            echo '    echo 'export PATH="/usr/local/opt/openssl/bin:$PATH"' >> ~/.bash_profile'
+            echo '    source ~/.bash_profile'
+            echo ''
             exit 1
         fi
-        ;;
+    ;;
+    *)
+        openssl_params='-pbkdf2 -iter 100000'
 esac
 
 # retrieve ssh keys from github
@@ -103,7 +110,7 @@ if [[ "${#public_key[@]}" > 0 ]]; then
     done
     echo "-- /keys"
 
-    if cat | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -pass file:"$temp_file_key" > "$temp_file"; then
+    if cat | openssl enc -aes-256-cbc -salt $openssl_params -pass file:"$temp_file_key" > "$temp_file"; then
         openssl base64 -A < "$temp_file"
     fi
 
@@ -129,8 +136,8 @@ elif [[ -e "$private_key" ]]; then
 
     decrypted=false
     for key in "${keys[@]}"; do
-        if $(echo "$key" | openssl base64 -d -A | openssl rsautl -decrypt -oaep -inkey "$temp_dir/private_key" >"$temp_file" 2>/dev/null); then
-            if echo "$cypher" | openssl base64 -d -A | openssl aes-256-cbc -pbkdf2 -iter 100000 -d -pass file:"$temp_file"; then
+        if $(echo "$key" | openssl base64 -d -A | openssl rsautl -decrypt -oaep -inkey "$temp_dir/private_key" >"$temp_file_key" 2>/dev/null); then
+            if echo "$cypher" | openssl base64 -d -A | openssl aes-256-cbc -d $openssl_params -pass file:"$temp_file_key"; then
                 decrypted=true
             fi
         fi
