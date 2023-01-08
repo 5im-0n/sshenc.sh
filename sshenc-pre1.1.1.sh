@@ -15,7 +15,7 @@ examples:
     - decrypt a file
     $me -s ~/.ssh/id_rsa < encrypted.txt
 
-$me home page: https://github.com/S2-/sshenc.sh
+$me home page: https://sshenc.sh/
 EOF
 }
 
@@ -49,7 +49,7 @@ trap cleanup EXIT
 if [[ "${#public_key[@]}" > 0 ]]; then
     openssl rand 32 > $temp_file_key
 
-    echo "-- encrypted with https://github.com/S2-/sshenc.sh"
+    echo "-- encrypted with https://sshenc.sh/"
     echo "-- keys"
     for pubkey in "${public_key[@]}"
     do
