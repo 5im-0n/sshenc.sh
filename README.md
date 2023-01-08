@@ -4,13 +4,13 @@
 
 If you received a message from someone that was encrypted with this script, you can decrypt it with your ssh private key using the following command without installing anything:
 ```
-bash <(curl -s https://sshenc.sh/sshenc.sh) -s ~/.ssh/id_rsa < file-containing-the-encrypted-text.txt
+bash <(curl -s https://github.com/S2-/sshenc.shsshenc.sh) -s ~/.ssh/id_rsa < file-containing-the-encrypted-text.txt
 ```
 sshenc.sh uses openssl under the hood, so you need to have that installed in your path to make it work.
 
 ## Install
 ```
-curl -O https://sshenc.sh/sshenc.sh
+curl -O https://github.com/S2-/sshenc.shsshenc.sh
 chmod +x sshenc.sh
 ```
 
@@ -42,7 +42,7 @@ sshenc.sh -s ~/.ssh/id_rsa < encrypted.txt
 Also, a new `-iter` parameter to explicitly specify a given number of iterations on the password in deriving the encryption key was added.  
 Before OpenSSL 1.1.1 this option was not available.  
 Since the new parameters are more secure, `sshenc.sh` changed to adopt them, so since 2019-11-26, files encrypted with a previous version of `sshenc.sh` will not decrypt.  
-To do so, use the prevous `sshenc.sh` script, located at [https://sshenc.sh/sshenc-pre1.1.1.sh](https://sshenc.sh/sshenc-pre1.1.1.sh).
+To do so, use the prevous `sshenc.sh` script, located at [https://github.com/S2-/sshenc.shsshenc-pre1.1.1.sh](https://github.com/S2-/sshenc.shsshenc-pre1.1.1.sh).
 
 ## License
 [MIT](https://opensource.org/licenses/MIT)
