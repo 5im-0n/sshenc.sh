@@ -21,7 +21,7 @@ examples:
     - encrypt using multiple public keys (file can be read by any associated private key)
     $me -g foo -g bar -p baz -p ~/.ssh/id_rsa.pub < plain-text-file.txt > encrypted.txt
 
-$me home page: https://github.com/S2-/sshenc.sh/
+$me home page: https://github.com/5im-0n/sshenc.sh/
 EOF
 }
 
@@ -102,7 +102,7 @@ fi
 if [[ "${#public_key[@]}" > 0 ]]; then
     openssl rand 32 > $temp_file_key
 
-    echo "-- encrypted with https://github.com/S2-/sshenc.sh/"
+    echo "-- encrypted with https://github.com/5im-0n/sshenc.sh/"
     echo "-- keys"
     for pubkey in "${public_key[@]}"
     do
